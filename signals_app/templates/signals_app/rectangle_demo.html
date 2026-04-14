@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Rectangle Iterator Demo</title>
+    <style>
+      body {
+        font-family: Georgia, serif;
+        margin: 0;
+        padding: 2rem;
+        background: linear-gradient(135deg, #f9f7f3, #e9f3f6);
+        color: #1d2733;
+      }
+      .card {
+        max-width: 680px;
+        margin: 0 auto;
+        background: #ffffff;
+        border-radius: 14px;
+        padding: 1.5rem;
+        box-shadow: 0 12px 26px rgba(0, 0, 0, 0.08);
+      }
+      h1 {
+        margin-top: 0;
+      }
+      form {
+        display: flex;
+        gap: 0.75rem;
+        flex-wrap: wrap;
+        margin-bottom: 1rem;
+      }
+      input {
+        padding: 0.55rem;
+        border: 1px solid #ced8e0;
+        border-radius: 8px;
+      }
+      button {
+        border: none;
+        border-radius: 8px;
+        padding: 0.55rem 0.95rem;
+        background: #0b6b6f;
+        color: #fff;
+        cursor: pointer;
+      }
+      .error {
+        color: #b00020;
+        margin-bottom: 1rem;
+      }
+      pre {
+        background: #f4f7fa;
+        border-radius: 8px;
+        padding: 1rem;
+        overflow-x: auto;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="card">
+      <h1>Rectangle Iteration Output</h1>
+      <p>Iterating Rectangle(length, width) yields length first, then width.</p>
+      <p>
+        <a href="/signals-assignment/">Open Django Signals Assignment Demo</a>
+      </p>
+
+      <form method="get">
+        <input
+          type="number"
+          name="length"
+          value="{{ length }}"
+          placeholder="Length"
+          required
+        />
+        <input
+          type="number"
+          name="width"
+          value="{{ width }}"
+          placeholder="Width"
+          required
+        />
+        <button type="submit">Run</button>
+      </form>
+
+      {% if error %}
+      <div class="error">{{ error }}</div>
+      {% endif %}
+
+      <h2>Output</h2>
+      <pre>{{ items }}</pre>
+    </div>
+  </body>
+</html>

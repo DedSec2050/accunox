@@ -6,6 +6,8 @@ __pycache__/
 # Distribution / packaging
 build/
 dist/
+*.egg-info/
+.eggs/
 
 # Virtual environments
 .venv/
@@ -23,3 +25,24 @@ staticfiles/
 .env
 .env.*
 *.env
+
+# Test, coverage, and type-check caches
+.pytest_cache/
+.coverage
+.coverage.*
+htmlcov/
+.mypy_cache/
+.ruff_cache/
+.pyre/
+.hypothesis/
+
+# Logs and local runtime artifacts
+*.log
+*.pid
+
+# IDE/editor and OS metadata
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store

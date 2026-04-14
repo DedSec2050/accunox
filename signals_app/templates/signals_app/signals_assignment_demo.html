@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Django Signals Assignment Proof</title>
+    <style>
+      body {
+        margin: 0;
+        padding: 2rem;
+        font-family: "Trebuchet MS", Verdana, sans-serif;
+        background: linear-gradient(135deg, #f5f2ea, #e7f2ec);
+        color: #1f2d2a;
+      }
+      .wrap {
+        max-width: 980px;
+        margin: 0 auto;
+      }
+      .panel {
+        background: #fff;
+        border-radius: 14px;
+        padding: 1.2rem;
+        box-shadow: 0 10px 24px rgba(0, 0, 0, 0.08);
+        margin-bottom: 1rem;
+      }
+      pre {
+        background: #f6f7f9;
+        border-radius: 8px;
+        padding: 1rem;
+        overflow-x: auto;
+      }
+      .ok {
+        color: #126d2a;
+        font-weight: 700;
+      }
+      .bad {
+        color: #9a1b1b;
+        font-weight: 700;
+      }
+      a {
+        color: #0b6166;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="wrap">
+      <div class="panel">
+        <h1>Django Signals: Assignment Proofs</h1>
+        <p>
+          This page runs all 3 checks every refresh and shows direct runtime
+          evidence.
+        </p>
+        <p><a href="/rectangle/">Open Rectangle Demo</a></p>
+      </div>
+
+      <div class="panel">
+        <h2>Q1: Default synchronous or asynchronous?</h2>
+        <p>
+          Result: {% if q1_result %}
+          <span class="ok">Synchronous (default)</span>
+          {% else %}
+          <span class="bad">Could not prove synchronous behavior</span>
+          {% endif %}
+        </p>
+        <p>
+          Observed save call duration: {{ q1_elapsed }}s (handler sleeps for 1
+          second).
+        </p>
+        <pre>
+caller:
+start = time.perf_counter()
+User.objects.create_user(...)
+elapsed = time.perf_counter() - start
+
+signal:
+time.sleep(1)
+
+If elapsed >= 1 second, caller waited for signal, so signal execution is synchronous.</pre
+        >
+      </div>
+
+      <div class="panel">
+        <h2>Q2: Same thread as caller?</h2>
+        <p>
+          Result: {% if q2_result %}
+          <span class="ok">Yes, same thread (default)</span>
+          {% else %}
+          <span class="bad">Thread IDs differ</span>
+          {% endif %}
+        </p>
+        <p>Caller thread ID: {{ q2_caller_thread }}</p>
+        <p>Signal thread ID: {{ q2_signal_thread }}</p>
+        <pre>
+caller_thread_id = threading.get_ident()
+set_caller_context(caller_thread_id)
+User.objects.create_user(...)
+
+@receiver(post_save, sender=User)
+def assignment_signal_probe(...):
+    signal_thread_id = threading.get_ident()
+
+Compare caller_thread_id with signal_thread_id.</pre
+        >
+      </div>
+
+      <div class="panel">
+        <h2>Q3: Same database transaction as caller?</h2>
+        <p>
+          Result: {% if q3_result %}
+          <span class="ok">Yes, same transaction (default)</span>
+          {% else %}
+          <span class="bad">Rollback evidence did not match expectation</span>
+          {% endif %}
+        </p>
+        <p>User row exists after forced rollback: {{ q3_user_exists }}</p>
+        <p>
+          Signal-created MyModel row exists after forced rollback: {{
+          q3_model_exists }}
+        </p>
+        <p>
+          Signal observed connection.in_atomic_block: {{ q3_signal_in_atomic }}
+        </p>
+        <pre>
+try:
+    with transaction.atomic():
+        User.objects.create_user(...)
+        raise RuntimeError("Force rollback")
+except RuntimeError:
+    pass
+
+user_exists = User.objects.filter(username=...).exists()
+model_exists = MyModel.objects.filter(name=...).exists()
+
+If both are False, signal write rolled back with caller transaction.</pre
+        >
+      </div>
+    </div>
+  </body>
+</html>
